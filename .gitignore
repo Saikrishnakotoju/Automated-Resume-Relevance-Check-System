@@ -1,0 +1,21 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# SQLite databases
+*.db
+resume_logs.db
+feedback.db
+
+# Streamlit / app results
+results/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
