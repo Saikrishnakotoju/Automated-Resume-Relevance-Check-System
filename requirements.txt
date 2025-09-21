@@ -5,8 +5,8 @@ pdfplumber==0.11.7
 docx2txt==0.9
 opencv-python
 scikit-learn
-tensorflow
 cvzone
 pyttsx3
-sentence-transformers
-transformers
+sentence-transformers==5.1.0
+transformers==4.56.2
+torch==2.8.0
