@@ -4,10 +4,8 @@ import streamlit.components.v1 as components
 
 from utils.parser import extract_text
 from utils.matcher import compute_hard_match, get_verdict
-from semantic_matcher_local import compute_semantic_score
 from scorer import final_score
 from database import SessionLocal, ResumeLog
-
 
 st.set_page_config(page_title="Automated Resume Relevance Check", layout="wide")
 st.title("📝 Automated Resume Relevance Check System")
@@ -38,8 +36,8 @@ if menu == "Resume Analysis":
             hard_score, missing_keywords = compute_hard_match(jd_text, resume_text)
             verdict = get_verdict(hard_score)
 
-            # Semantic match
-            semantic_score = compute_semantic_score(jd_text, resume_text)
+            # TEMPORARY: Skip semantic match for quick deployment
+            semantic_score = 0.0
 
             # Final combined score
             combined_score = final_score(hard_score, semantic_score)
@@ -127,7 +125,7 @@ elif menu == "Audit Log":
                 "Semantic Score": log.semantic_score,
                 "Final Score": log.final_score,
                 "Verdict": log.verdict,
-                "Missing Keywords / Suggestions": log.missing_keywords,  # new column
+                "Missing Keywords / Suggestions": log.missing_keywords,
                 "Created At": log.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             }
             for log in logs
