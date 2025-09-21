@@ -1,7 +1,7 @@
 streamlit
 pandas
-pdfplumber
-docx2txt
-sentence-transformers
-sqlalchemy
+numpy
 scikit-learn
+pdfplumber
+python-docx
+docx2txt
