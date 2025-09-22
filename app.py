@@ -57,7 +57,7 @@ if menu == "Resume Analysis":
 
             # Semantic match
             semantic_score = compute_semantic_score(st.session_state["jd_text"], resume_text)
-                (Add session time tracking for Resume Analysis page)
+            (Add session time tracking for Resume Analysis page)
 
             # Final combined score
             combined_score = final_score(hard_score, semantic_score)
