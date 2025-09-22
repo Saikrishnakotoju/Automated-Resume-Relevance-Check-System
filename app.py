@@ -51,13 +51,13 @@ if menu == "Resume Analysis":
             hard_score, missing_keywords = compute_hard_match(st.session_state["jd_text"], resume_text)
             verdict = get_verdict(hard_score)
 
-<<<<<<< HEAD
+
             # TEMPORARY: Skip semantic match for quick deployment
             semantic_score = 0.0
 =======
             # Semantic match
             semantic_score = compute_semantic_score(st.session_state["jd_text"], resume_text)
->>>>>>> 64d990d (Add session time tracking for Resume Analysis page)
+                (Add session time tracking for Resume Analysis page)
 
             # Final combined score
             combined_score = final_score(hard_score, semantic_score)
