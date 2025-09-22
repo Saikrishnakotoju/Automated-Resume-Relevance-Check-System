@@ -4,6 +4,7 @@ import streamlit.components.v1 as components
 
 from utils.parser import extract_text
 from utils.matcher import compute_hard_match, get_verdict
+from semantic_matcher_local import compute_semantic_score
 from scorer import final_score
 from database import SessionLocal, ResumeLog
 
@@ -51,13 +52,8 @@ if menu == "Resume Analysis":
             hard_score, missing_keywords = compute_hard_match(st.session_state["jd_text"], resume_text)
             verdict = get_verdict(hard_score)
 
-
-            # TEMPORARY: Skip semantic match for quick deployment
-            semantic_score = 0.0
-
             # Semantic match
             semantic_score = compute_semantic_score(st.session_state["jd_text"], resume_text)
-                (Add session time tracking for Resume Analysis page)
 
             # Final combined score
             combined_score = final_score(hard_score, semantic_score)
