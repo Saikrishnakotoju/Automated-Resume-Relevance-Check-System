@@ -13,19 +13,34 @@ st.title("📝 Automated Resume Relevance Check System")
 # Sidebar navigation
 menu = st.sidebar.radio("📂 Navigation", ["Resume Analysis", "Audit Log"])
 
+# Initialize session state
+if "jd_text" not in st.session_state:
+    st.session_state["jd_text"] = None
+if "results_df" not in st.session_state:
+    st.session_state["results_df"] = None
+
 # ========== PAGE 1: Resume Analysis ==========
 if menu == "Resume Analysis":
     jd_file = st.file_uploader("Upload Job Description (PDF/DOCX)", type=["pdf", "docx"])
+
+    # If new JD uploaded
     if jd_file:
         jd_text = extract_text(jd_file)
+        st.session_state["jd_text"] = jd_text
         st.markdown("**Job Description Preview:**")
         st.text_area("JD Text", jd_text, height=200)
+
+    # If no new JD, but one exists in session
+    elif st.session_state["jd_text"]:
+        st.markdown("**Job Description Preview (Cached):**")
+        st.text_area("JD Text", st.session_state["jd_text"], height=200)
 
     resume_files = st.file_uploader(
         "Upload Resumes (PDF/DOCX)", type=["pdf", "docx"], accept_multiple_files=True
     )
 
-    if resume_files and jd_file:
+    # Process resumes
+    if resume_files and st.session_state["jd_text"]:
         data = []
         db = SessionLocal()
 
@@ -33,16 +48,21 @@ if menu == "Resume Analysis":
             resume_text = extract_text(r_file)
 
             # Hard match
-            hard_score, missing_keywords = compute_hard_match(jd_text, resume_text)
+            hard_score, missing_keywords = compute_hard_match(st.session_state["jd_text"], resume_text)
             verdict = get_verdict(hard_score)
 
+<<<<<<< HEAD
             # TEMPORARY: Skip semantic match for quick deployment
             semantic_score = 0.0
+=======
+            # Semantic match
+            semantic_score = compute_semantic_score(st.session_state["jd_text"], resume_text)
+>>>>>>> 64d990d (Add session time tracking for Resume Analysis page)
 
             # Final combined score
             combined_score = final_score(hard_score, semantic_score)
 
-            # Highlight missing keywords in resume
+            # Highlight missing keywords
             highlighted_resume = resume_text
             for kw in missing_keywords:
                 highlighted_resume = highlighted_resume.replace(
@@ -73,13 +93,17 @@ if menu == "Resume Analysis":
 
         db.close()
 
-        df = pd.DataFrame(data)
+        st.session_state["results_df"] = pd.DataFrame(data)
 
-        # Show summary table
+    # If results already exist in session, show them
+    if st.session_state["results_df"] is not None:
+        df = st.session_state["results_df"]
+
+        # Summary Table
         st.subheader("📊 Resume Analysis Results")
         st.dataframe(df[["Resume", "Hard Score", "Semantic Score", "Final Score", "Verdict", "Missing Keywords"]])
 
-        # Download CSV
+        # CSV download
         csv = df.to_csv(index=False).encode("utf-8")
         st.download_button(
             label="Download Results as CSV",
@@ -88,7 +112,7 @@ if menu == "Resume Analysis":
             mime="text/csv"
         )
 
-        # Highlighted resumes with missing keywords
+        # Highlights
         st.subheader("📄 Resume Highlights & Missing Keywords")
         top_n = st.slider("Show top N resumes", 1, len(df), min(5, len(df)))
 
@@ -102,7 +126,7 @@ if menu == "Resume Analysis":
                 components.html(highlighted_html, height=220)
 
                 missing_keywords = df.iloc[i]["Missing Keywords"].split(", ")
-                top_missing = missing_keywords[:5]  # show top 5 missing keywords
+                top_missing = missing_keywords[:5]
                 badges_html = " ".join(
                     [f"<span style='background-color:#FF6347;color:white;padding:3px 8px;border-radius:5px;margin:2px;'>{kw}</span>" for kw in top_missing]
                 )
@@ -134,7 +158,6 @@ elif menu == "Audit Log":
         log_df = pd.DataFrame(log_data)
         st.dataframe(log_df)
 
-        # CSV download
         csv = log_df.to_csv(index=False).encode("utf-8")
         st.download_button(
             label="⬇️ Download Full Audit Log",
