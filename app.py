@@ -54,7 +54,7 @@ if menu == "Resume Analysis":
 
             # TEMPORARY: Skip semantic match for quick deployment
             semantic_score = 0.0
-=======
+
             # Semantic match
             semantic_score = compute_semantic_score(st.session_state["jd_text"], resume_text)
                 (Add session time tracking for Resume Analysis page)
